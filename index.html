@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ExchangeMiniApp PWA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0b0c10" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">ExchangeMiniApp</div>
+    <button id="refreshBtn" class="btn primary">Refresh</button>
+  </header>
+
+  <main>
+    <section id="alertsSection">
+      <h2>Alerts</h2>
+      <div id="alerts"></div>
+    </section>
+
+    <section id="dashboardSection">
+      <h2>Dashboard</h2>
+      <div id="dashboard" class="cards"></div>
+    </section>
+
+    <section id="dealsSection">
+      <h2>Deals</h2>
+      <div id="deals"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    ExchangeMiniApp — PWA — Online + Offline
+  </footer>
+
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("service-worker.js")
+          .then(() => console.log("SW registered"))
+          .catch(err => console.error("SW error", err));
+      });
+    }
+  </script>
+</body>
+</html>

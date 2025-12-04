@@ -1,0 +1,155 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0b0c10;
+  color: #eaeaea;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #14151f;
+  border-bottom: 1px solid #222434;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.btn {
+  border: 1px solid #3b3f5c;
+  background: #1c1f2b;
+  color: #eaeaea;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn.primary {
+  border-color: #4f8cff;
+  background: linear-gradient(120deg, #306dff, #4f8cff);
+  color: #fff;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+main {
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Dashboard cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  background: #14151f;
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid #23263a;
+}
+
+.card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #cfd4ff;
+}
+
+.card .value {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Alerts */
+.alert {
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.alert.ok {
+  background: #062612;
+  border-left: 4px solid #37c871;
+}
+
+.alert.warn {
+  background: #261f06;
+  border-left: 4px solid #f0a500;
+}
+
+.alert.err {
+  background: #2a1114;
+  border-left: 4px solid #ff4b6a;
+}
+
+/* Deals list */
+#deals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deal-item {
+  background: #14151f;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #23263a;
+  font-size: 0.85rem;
+}
+
+.deal-item .row1 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+}
+
+.deal-id {
+  font-weight: 600;
+}
+
+.deal-type {
+  opacity: 0.85;
+}
+
+.deal-row2 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.footer {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  color: #7f8295;
+  border-top: 1px solid #222434;
+  text-align: center;
+  margin-top: 1rem;
+}
