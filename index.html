@@ -21,8 +21,8 @@
   <header class="topbar">
     <div class="logo">ExchangeMiniApp</div>
     <div class="topbar-actions">
-      <button class="btn" id="btn-new-deal" onclick="openNewDealForm()">+ New Deal</button>
-      <button class="btn btn-primary" onclick="refreshApp()">Refresh</button>
+      <button id="btn-new-deal" class="btn btn-secondary">+ New Deal</button>
+      <button id="btn-refresh" class="btn btn-primary">Refresh</button>
     </div>
   </header>
 
@@ -35,73 +35,75 @@
   <!-- New Deal Form -->
   <section id="new-deal-card" class="card new-deal hidden">
     <h2>New Deal</h2>
-    <form id="newDealForm" onsubmit="return false;">
+
+    <form id="newDealForm">
       <div class="form-grid">
-        <!-- Deal ID (editable) -->
+
+        <!-- 1. Deal ID (editable) -->
         <div class="form-group full">
           <label for="deal_id">Deal ID</label>
-          <input id="deal_id" name="deal_id" type="text" placeholder="Auto: QORB-05DEC2025-001" />
-          <p class="hint">به‌صورت خودکار ساخته می‌شود، ولی می‌توانی ویرایشش کنی.</p>
+          <input id="deal_id" name="deal_id" type="text"
+                 placeholder="Auto: GHOR-05DEC2025-001" />
+          <p class="hint">
+            به‌صورت خودکار ساخته می‌شود، ولی می‌توانی ویرایشش کنی.
+          </p>
         </div>
 
-        <!-- 1. tx_date -->
+        <!-- 2. tx_date -->
         <div class="form-group">
           <label for="tx_date">Date</label>
           <input id="tx_date" name="tx_date" type="date" required />
         </div>
 
-        <!-- 2. customer -->
+        <!-- 3. customer -->
         <div class="form-group">
           <label for="customer">Customer</label>
-          <input id="customer" name="customer" type="text" placeholder="Qorbanzadeh" required />
+          <input id="customer" name="customer" type="text"
+                 placeholder="Qorbanzadeh" required />
         </div>
 
-        <!-- 3. exchanger -->
+        <!-- 4. exchanger -->
         <div class="form-group">
           <label for="exchanger">Exchanger</label>
-          <input id="exchanger" name="exchanger" type="text" placeholder="EXB" />
+          <input id="exchanger" name="exchanger" type="text"
+                 placeholder="EXB" />
         </div>
 
-        <!-- 4. account_id -->
+        <!-- 5. account_id -->
         <div class="form-group">
-          <label for="account_id">Account ID</label>
-          <input id="account_id" name="account_id" type="text" placeholder="Wallet / Bank / CashBox" />
+          <label for="account_id">Account ID / Wallet</label>
+          <input id="account_id" name="account_id" type="text"
+                 placeholder="Wallet / Bank / CashBox" />
         </div>
 
-        <!-- 5. tx_type -->
+        <!-- 6. tx_type -->
         <div class="form-group">
           <label for="tx_type">Transaction Type</label>
           <select id="tx_type" name="tx_type" required>
-            <option value="">Select…</option>
+            <option value="">Select...</option>
             <option value="inflow">Inflow</option>
             <option value="outflow">Outflow</option>
             <option value="conversion">Conversion</option>
           </select>
         </div>
 
-        <!-- 6. base_currency -->
+        <!-- 7. base_currency -->
         <div class="form-group">
           <label for="base_currency">Base Currency</label>
           <select id="base_currency" name="base_currency" required>
-            <option value="">Select…</option>
+            <option value="">Select...</option>
             <option value="RMB">RMB</option>
             <option value="USD">USD</option>
             <option value="IRR">IRR</option>
             <option value="AED">AED</option>
           </select>
-        </div>
-
-        <!-- 7. amount -->
-        <div class="form-group">
-          <label for="amount">Amount</label>
-          <input id="amount" name="amount" type="number" step="0.01" required />
         </div>
 
         <!-- 8. target_currency -->
         <div class="form-group">
           <label for="target_currency">Target Currency</label>
           <select id="target_currency" name="target_currency">
-            <option value="">Select…</option>
+            <option value="">Select...</option>
             <option value="RMB">RMB</option>
             <option value="USD">USD</option>
             <option value="IRR">IRR</option>
@@ -109,48 +111,56 @@
           </select>
         </div>
 
-        <!-- 9. payable -->
+        <!-- 9. amount -->
         <div class="form-group">
-          <label for="payable">Payable</label>
-          <input id="payable" name="payable" type="number" step="0.01" />
-          <p class="hint">اگر Conversion باشد، در صورت امکان به‌صورت خودکار محاسبه می‌شود.</p>
+          <label for="amount">Amount (base)</label>
+          <input id="amount" name="amount" type="number" step="0.0001"
+                 inputmode="decimal" required />
         </div>
 
-        <!-- 10. trader_rate -->
+        <!-- 10. payable -->
+        <div class="form-group">
+          <label for="payable">Payable (target)</label>
+          <input id="payable" name="payable" type="number" step="0.0001"
+                 inputmode="decimal" />
+          <p class="hint">
+            اگر Conversion باشد و اینجا خالی بگذاری، بر اساس Trader Rate
+            محاسبه می‌شود.
+          </p>
+        </div>
+
+        <!-- 11. trader_rate -->
         <div class="form-group">
           <label for="trader_rate">Trader Rate</label>
-          <input id="trader_rate" name="trader_rate" type="number" step="0.0001" />
+          <input id="trader_rate" name="trader_rate" type="number"
+                 step="0.0001" inputmode="decimal" />
         </div>
 
-        <!-- 11. exchanger_rate -->
+        <!-- 12. exchanger_rate -->
         <div class="form-group">
           <label for="exchanger_rate">Exchanger Rate</label>
-          <input id="exchanger_rate" name="exchanger_rate" type="number" step="0.0001" />
+          <input id="exchanger_rate" name="exchanger_rate" type="number"
+                 step="0.0001" inputmode="decimal" />
         </div>
 
-        <!-- 12. notes -->
+        <!-- 13. notes -->
         <div class="form-group full">
           <label for="notes">Notes</label>
-          <textarea id="notes" name="notes" rows="2" placeholder="Optional notes…"></textarea>
+          <textarea id="notes" name="notes" rows="2"
+                    placeholder="توضیحات اضافی (اختیاری)"></textarea>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-primary" onclick="handleNewDealSubmit('save')">
-          Save
-        </button>
-        <button type="button" class="btn" onclick="handleNewDealSubmit('saveNew')">
-          Save &amp; New
-        </button>
-        <button type="button" class="btn btn-ghost" onclick="cancelNewDealForm()">
-          Cancel
-        </button>
+        <button type="submit" class="btn btn-primary">Save Deal</button>
+        <button type="button" id="btn-cancel-new-deal"
+                class="btn btn-secondary">Cancel</button>
       </div>
     </form>
   </section>
 
   <!-- Deals List -->
-  <section id="deals" class="card deals"></section>
+  <section id="deals" class="card deals-list"></section>
 
   <script src="app.js"></script>
 </body>
