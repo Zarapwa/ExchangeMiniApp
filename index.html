@@ -2,53 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ExchangeMiniApp PWA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExchangeMiniApp</title>
+
+  <link rel="stylesheet" href="styles.css" />
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0b0c10" />
+  <meta name="theme-color" content="#000000" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <!-- iOS Support -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 </head>
+
 <body>
+
   <header class="topbar">
     <div class="logo">ExchangeMiniApp</div>
-    <button id="refreshBtn" class="btn primary">Refresh</button>
+    <button class="btn btn-primary" onclick="refresh()">Refresh</button>
   </header>
 
-  <main>
-    <section id="alertsSection">
-      <h2>Alerts</h2>
-      <div id="alerts"></div>
-    </section>
+  <section id="alerts"></section>
 
-    <section id="dashboardSection">
-      <h2>Dashboard</h2>
-      <div id="dashboard" class="cards"></div>
-    </section>
+  <section id="dashboard" class="dashboard"></section>
 
-    <section id="dealsSection">
-      <h2>Deals</h2>
-      <div id="deals"></div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    ExchangeMiniApp — PWA — Online + Offline
-  </footer>
+  <h2 style="padding:20px;">Deals</h2>
+  <section id="deals"></section>
 
   <script src="app.js"></script>
 
+  <!-- Register Service Worker (GOLD version) -->
   <script>
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("service-worker.js")
-          .then(() => console.log("SW registered"))
-          .catch(err => console.error("SW error", err));
-      });
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.error("SW failed", err));
     }
   </script>
+
 </body>
 </html>
