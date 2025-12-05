@@ -1,29 +1,31 @@
-/* ===========================
-   ExchangeMiniApp — GOLD THEME
-   Full styles.css (FINAL)
-   =========================== */
+/* ExchangeMiniApp — GOLD THEME */
 
-/* ----- BASE ----- */
-* {
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui;
-  background: #05060a; /* Deep black */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #06060a; /* deep dark */
   color: #eaeaea;
 }
 
-/* ----- TOP BAR ----- */
+/* ---------- Top Bar ---------- */
+
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 1.1rem;
-  background: #05060a;
-  border-bottom: 1px solid #222533;
+  padding: 0.9rem 1.2rem;
+  background: #050516;
+  border-bottom: 1px solid #22233a;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -37,87 +39,101 @@ body {
 
 .topbar-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
-/* ----- BUTTONS ----- */
+/* ---------- Buttons ---------- */
+
 .btn {
-  border: 1px solid #3a3f5a;
-  background: #101320;
+  border: 0;
   border-radius: 999px;
-  padding: 0.38rem 0.9rem;
+  padding: 0.35rem 1.1rem;
   font-size: 0.9rem;
-  color: #eaeaea;
   cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.btn:hover {
-  filter: brightness(1.1);
+  font-weight: 500;
+  background: #222;
+  color: #eee;
 }
 
 .btn-primary {
-  border-color: #3f8cff;
-  background: linear-gradient(135deg, #3674ff, #4fc3ff);
-  color: white;
+  background: linear-gradient(120deg, #3b86ff, #7a5cff);
 }
 
-.btn-ghost {
-  background: transparent;
-  border-color: transparent;
-  color: #9ca3af;
+.btn-secondary {
+  background: #191a24;
 }
 
-/* ----- CARDS ----- */
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+/* ---------- Cards / Layout ---------- */
+
 .card {
-  background: #070813;
-  border-radius: 1rem;
   margin: 0.8rem 0.9rem;
-  padding: 1rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: #0d0d18;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
 }
 
-/* ----- DASHBOARD ----- */
-.dashboard {
+.hidden {
+  display: none;
+}
+
+/* ---------- Alerts ---------- */
+
+.alert {
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+}
+
+.alert-ok {
+  background: linear-gradient(120deg, #0f6b3a, #1aa757);
+  color: #f5fff7;
+}
+
+/* ---------- Dashboard ---------- */
+
+.dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
 }
 
-.stat {
-  padding: 0.8rem;
-  border-radius: 0.8rem;
-  background: #0c0f1d;
-  border: 1px solid #1e2235;
+.dash-card {
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  background: #11111f;
+  border: 1px solid #23243a;
 }
 
-.stat-label {
-  font-size: 0.83rem;
-  color: #9ca3af;
+.dash-title {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin-bottom: 0.4rem;
 }
 
-.stat-value {
-  margin-top: 0.25rem;
-  font-size: 1.4rem;
+.dash-value {
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
-/* ----- ALERTS ----- */
-#alerts .stat-value {
-  font-size: 0.95rem;
-}
+/* ---------- New Deal Form ---------- */
 
-/* ----- NEW DEAL FORM ----- */
-.new-deal h2 {
-  margin: 0 0 0.8rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+.new-deal h2,
+.deals-list h2,
+#deals h2 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.05rem;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem 0.9rem;
 }
 
 .form-group {
@@ -131,27 +147,24 @@ body {
 }
 
 label {
-  font-size: 0.8rem;
-  color: #9ca3af;
+  font-size: 0.78rem;
+  opacity: 0.85;
 }
 
 input,
 select,
 textarea {
-  background: #050814;
-  border-radius: 0.55rem;
-  border: 1px solid #262b3d;
-  padding: 0.55rem 0.65rem;
-  color: #eaeaea;
-  font-size: 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #33354a;
+  background: #050513;
+  padding: 0.45rem 0.55rem;
+  color: #f0f0ff;
+  font-size: 0.85rem;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: #4f8cff;
-  box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.4);
+input::placeholder,
+textarea::placeholder {
+  opacity: 0.55;
 }
 
 textarea {
@@ -160,66 +173,79 @@ textarea {
 
 .hint {
   margin: 0;
-  font-size: 0.7rem;
-  color: #6b7280;
+  font-size: 0.72rem;
+  opacity: 0.6;
 }
 
 .form-actions {
+  margin-top: 0.9rem;
   display: flex;
+  gap: 0.5rem;
   justify-content: flex-end;
-  gap: 0.6rem;
-  margin-top: 1rem;
 }
 
-/* ----- LIST OF DEALS ----- */
-#deals h2 {
-  margin: 0 0 0.6rem 0;
-  font-size: 1.05rem;
+/* ---------- Deals List ---------- */
+
+.deal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-.deal-item {
-  padding: 0.6rem 0;
-  border-top: 1px solid #181b2b;
-  font-size: 0.9rem;
-}
-
-.deal-item:first-child {
-  border-top: none;
+.deal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.4rem;
+  border-radius: 10px;
+  background: #070716;
+  border: 1px solid #1b1c32;
 }
 
 .deal-main {
   display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-width: 70%;
 }
 
 .deal-id {
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
-.deal-amount {
-  font-weight: 600;
-}
-
 .deal-meta {
-  margin-top: 0.1rem;
-  color: #9ca3af;
   font-size: 0.75rem;
+  opacity: 0.7;
 }
 
-/* ----- VISIBILITY ----- */
-.hidden {
-  display: none !important;
+.deal-amount {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
 }
 
-/* ----- RESPONSIVE (TABLET & DESKTOP) ----- */
-@media (min-width: 720px) {
-  .dashboard {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+.empty {
+  font-size: 0.82rem;
+  opacity: 0.7;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 900px) {
+  body {
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  .form-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .topbar {
+    border-radius: 0 0 18px 18px;
+    margin: 0.4rem 0.4rem 0;
+  }
+
+  .card {
+    margin-left: 0.4rem;
+    margin-right: 0.4rem;
   }
 }
-🔥 فایل آمادهٔ کامل
