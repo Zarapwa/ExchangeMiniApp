@@ -1,6 +1,11 @@
-// ExchangeMiniApp — GOLD+ Version
+// ExchangeMiniApp — V102 GOLD++
+// طراحی ثابت، منطق پیشرفته‌تر:
+// - WhatsApp Report برای هر Deal
+// - آماده‌سازی Edit/Delete (توابع پایه)
+// - منطق هوشمندتر Payable برای Conversion
+// - استفاده از localStorage برای تراکنش‌های جدید
 
-const LOCAL_KEY = "exchangeMiniApp_localRows_v1";
+const LOCAL_KEY = "ExchangeMiniApp_localRows_v1";
 
 const state = {
   remoteRows: [],
@@ -8,218 +13,63 @@ const state = {
   rows: []
 };
 
-// ---------- Helpers ----------
-
-function toNumber(value) {
-  if (value === null || value === undefined || value === "") return null;
-  const n = Number(String(value).replace(/,/g, ""));
-  return Number.isFinite(n) ? n : null;
-}
+/* ---------- Helpers ---------- */
 
 function todayISO() {
   const d = new Date();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${m}-${day}`;
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
-function formatAmount(n) {
-  const num = Number(n || 0);
+function formatNumber(n) {
+  const num = Number(n) || 0;
   return num.toLocaleString("en-US");
 }
 
-function sumAmount(rows, type) {
-  return rows
-    .filter(r => (r.tx_type || "").toLowerCase() === type.toLowerCase())
-    .reduce((s, r) => s + (toNumber(r.amount) || 0), 0);
-}
-
-function countConversions(rows) {
-  return rows.filter(
-    r => (r.tx_type || "").toLowerCase() === "conversion"
-  ).length;
-}
-
-// Gold Deal ID generator: NAME + DATE + COUNTER
-function generateDealId(customer, txDate, allRows) {
-  const rawName = (customer || "DEAL").toUpperCase();
-  // فقط حروف A-Z برای Prefix
-  const nameLetters = rawName.replace(/[^A-Z]/g, "") || "DEAL";
-  const prefix =
-    nameLetters.length >= 4 ? nameLetters.slice(0, 4) : nameLetters.padEnd(4, "X");
-
-  let d = txDate;
-  if (!d) d = todayISO();
-  const [year, month, day] = d.split("-");
-  const dateCode =
-    day + month + year.slice(-2); // مثال: 2025-12-05 → 051225
-
-  const sameDayRows = allRows.filter(r => r.tx_date === d);
-  const counter = String(sameDayRows.length + 1).padStart(3, "0");
-
-  return `${prefix}-${dateCode}-${counter}`;
-}
-
-// Payable auto-calc for conversions based on Trader Rate
-function autoCalcPayable(base, target, amount, traderRate) {
-  const a = toNumber(amount);
-  const r = toNumber(traderRate);
-  if (a == null || r == null) return null;
-
-  const pair = `${base}->${target}`;
-
-  switch (pair) {
-    case "RMB->IRR":
-    case "USD->IRR":
-    case "USD->AED":
-      return a * r;
-
-    case "RMB->AED":
-    case "RMB->USD":
-      return a / r;
-
-    default:
-      return null;
-  }
-}
-
-function mergeRows() {
-  state.rows = [...state.remoteRows, ...state.localRows];
-
-  state.rows.sort((a, b) => {
-    const da = a.tx_date || "";
-    const db = b.tx_date || "";
-    if (da < db) return -1;
-    if (da > db) return 1;
-    // اگر تاریخ برابر بود، فقط برای پایداری ترتیب
-    return (a.deal_id || "").localeCompare(b.deal_id || "");
+function formatDateLabel(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit"
   });
 }
 
-// ---------- Rendering ----------
+// Generate Deal ID: DEAL-DDMMYY-XXX
+function generateDealId(dealDate) {
+  let d = dealDate ? new Date(dealDate) : new Date();
+  if (Number.isNaN(d.getTime())) d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear()).slice(-2);
 
-function renderAlerts() {
-  const el = document.getElementById("alerts");
-  if (!el) return;
+  const iso = d.toISOString().slice(0, 10);
+  const sameDay = state.rows.filter(r => r.tx_date === iso);
+  const counter = sameDay.length + 1;
 
-  el.innerHTML = `
-    <div class="alert alert-ok">
-      Everything looks OK ✓
-    </div>
-  `;
+  return `DEAL-${dd}${mm}${yy}-${String(counter).padStart(3, "0")}`;
 }
 
-function renderDashboard() {
-  const el = document.getElementById("dashboard");
-  if (!el) return;
+/* ---------- Data load / save ---------- */
 
-  const rows = state.rows;
-  const today = todayISO();
-
-  const totalTx = rows.length;
-  const todayTx = rows.filter(r => r.tx_date === today).length;
-  const totalIn = sumAmount(rows, "inflow");
-  const totalOut = sumAmount(rows, "outflow");
-  const convCount = countConversions(rows);
-
-  el.innerHTML = `
-    <div class="dashboard-grid">
-      <div class="dash-card">
-        <div class="dash-title">All Transactions</div>
-        <div class="dash-value">${formatAmount(totalTx)}</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-title">Today (${today})</div>
-        <div class="dash-value">${formatAmount(todayTx)}</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-title">Total Inflow (amount)</div>
-        <div class="dash-value">${formatAmount(totalIn)}</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-title">Total Outflow (amount)</div>
-        <div class="dash-value">${formatAmount(totalOut)}</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-title">Conversions</div>
-        <div class="dash-value">${formatAmount(convCount)}</div>
-      </div>
-    </div>
-  `;
-}
-
-function buildDealRow(row) {
-  const tx = (row.tx_type || "").toLowerCase();
-  const baseCur = row.base_currency || "";
-  const targetCur = row.target_currency || "";
-  const dealId = row.deal_id || "";
-  const date = row.tx_date || "";
-  const customer = row.customer || "";
-  const amount = toNumber(row.amount);
-  const payable = toNumber(row.payable);
-
-  let sign = "";
-  let displayAmount = null;
-  let displayCurrency = "";
-
-  if (tx === "inflow") {
-    sign = "+";
-    displayAmount = amount;
-    displayCurrency = baseCur;
-  } else if (tx === "outflow") {
-    sign = "–";
-    displayAmount = amount;
-    displayCurrency = baseCur;
-  } else if (tx === "conversion") {
-    sign = "–";
-    // برای نمایش، ترجیحاً payable را نشان بده
-    displayAmount = payable != null ? payable : amount;
-    displayCurrency = payable != null ? targetCur : baseCur;
+async function loadRemoteData() {
+  try {
+    const res = await fetch("data.json?cache=" + Date.now());
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.error("data.json is not array");
+      return [];
+    }
+    return data;
+  } catch (err) {
+    console.error("Error loading data.json", err);
+    return [];
   }
-
-  const amountText =
-    displayAmount != null ? `${sign}${formatAmount(displayAmount)} ${displayCurrency}` : "";
-
-  return `
-    <article class="deal-row">
-      <div class="deal-main">
-        <div class="deal-id">${dealId}</div>
-        <div class="deal-meta">
-          ${date} • ${tx} • ${customer}
-        </div>
-      </div>
-      <div class="deal-amount">${amountText}</div>
-    </article>
-  `;
 }
-
-function renderDeals() {
-  const el = document.getElementById("deals");
-  if (!el) return;
-
-  if (!state.rows.length) {
-    el.innerHTML = `
-      <h2>Deals</h2>
-      <p class="empty">No deals yet.</p>
-    `;
-    return;
-  }
-
-  const rowsHtml = state.rows
-    .slice()
-    .reverse() // آخرین تراکنش‌ها بالا
-    .map(buildDealRow)
-    .join("");
-
-  el.innerHTML = `
-    <h2>Deals</h2>
-    <div class="deal-list">
-      ${rowsHtml}
-    </div>
-  `;
-}
-
-// ---------- Local Storage ----------
 
 function loadLocalRows() {
   try {
@@ -228,8 +78,8 @@ function loadLocalRows() {
     const data = JSON.parse(raw);
     if (!Array.isArray(data)) return [];
     return data;
-  } catch (e) {
-    console.error("Error loading local rows", e);
+  } catch (err) {
+    console.error("Error reading local rows", err);
     return [];
   }
 }
@@ -237,188 +87,373 @@ function loadLocalRows() {
 function saveLocalRows() {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(state.localRows));
-  } catch (e) {
-    console.error("Error saving local rows", e);
+  } catch (err) {
+    console.error("Error saving local rows", err);
   }
 }
 
-// ---------- Remote Data ----------
+function mergeRows() {
+  state.rows = [...state.remoteRows, ...state.localRows];
+}
 
-async function loadRemoteRows() {
-  try {
-    const res = await fetch("data.json?cache=" + Date.now());
-    const data = await res.json();
-    if (!Array.isArray(data)) return [];
-    // اطمینان از اینکه NaN وارد نمی‌شود
-    return data.map(r => ({
-      ...r,
-      amount: toNumber(r.amount),
-      payable: toNumber(r.payable),
-      trader_rate: toNumber(r.trader_rate),
-      exchanger_rate: toNumber(r.exchanger_rate)
-    }));
-  } catch (e) {
-    console.error("Error loading data.json", e);
-    return [];
+/* ---------- Stats & Dashboard ---------- */
+
+function sumAmount(rows, type) {
+  return rows
+    .filter(r => (r.tx_type || "").toLowerCase() === type)
+    .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+}
+
+function countToday(rows) {
+  const t = todayISO();
+  return rows.filter(r => r.tx_date === t).length;
+}
+
+function countConversions(rows) {
+  return rows.filter(r => (r.tx_type || "").toLowerCase() === "conversion").length;
+}
+
+function renderDashboard() {
+  const rows = state.rows;
+
+  document.getElementById("stat-all-count").textContent = rows.length;
+  document.getElementById("stat-today-label").textContent = todayISO();
+  document.getElementById("stat-today-count").textContent = countToday(rows);
+
+  const inflow = sumAmount(rows, "inflow");
+  const outflow = sumAmount(rows, "outflow");
+  const conv = countConversions(rows);
+
+  document.getElementById("stat-inflow-amount").textContent = formatNumber(inflow);
+  document.getElementById("stat-outflow-amount").textContent = formatNumber(outflow);
+  document.getElementById("stat-conversions").textContent = conv;
+}
+
+/* ---------- Alerts (بالا) ---------- */
+
+function renderAlerts() {
+  const el = document.getElementById("alerts");
+  // فعلاً فقط OK – بعداً می‌توانیم هشدارهای Payable اینجا نشان بدهیم
+  el.innerHTML = `
+    <div class="alert-ok">
+      Everything looks OK ✔
+    </div>
+  `;
+}
+
+/* ---------- Conversion Payable Logic ---------- */
+
+function calcPayable(baseCur, targetCur, amount, rate) {
+  if (!baseCur || !targetCur || !amount || !rate) return null;
+
+  baseCur = baseCur.toUpperCase();
+  targetCur = targetCur.toUpperCase();
+
+  // قواعد نهایی‌شده
+  if (baseCur === "RMB" && targetCur === "IRR") {
+    return amount * rate;
   }
+  if (baseCur === "RMB" && targetCur === "AED") {
+    return amount / rate;
+  }
+  if (baseCur === "RMB" && targetCur === "USD") {
+    return amount / rate;
+  }
+  if (baseCur === "USD" && targetCur === "IRR") {
+    return amount * rate;
+  }
+  if (baseCur === "USD" && targetCur === "AED") {
+    return amount * rate;
+  }
+
+  // مسیرهای دیگر → پیش‌فرض ضربی
+  return amount * rate;
 }
 
-// ---------- New Deal Form ----------
+/* ---------- Deals list ---------- */
 
-function showNewDealForm() {
-  const card = document.getElementById("new-deal-card");
-  if (!card) return;
-  card.classList.remove("hidden");
+function renderDeals() {
+  const container = document.getElementById("deals");
+  const rows = [...state.rows];
 
-  // پیش‌فرض‌ها
-  const today = todayISO();
-  document.getElementById("tx_date").value = today;
-  document.getElementById("tx_type").value = "";
-  document.getElementById("base_currency").value = "";
-  document.getElementById("target_currency").value = "";
-  document.getElementById("amount").value = "";
-  document.getElementById("payable").value = "";
-  document.getElementById("trader_rate").value = "";
-  document.getElementById("exchanger_rate").value = "";
-  document.getElementById("notes").value = "";
+  rows.sort((a, b) => {
+    const da = a.tx_date || "";
+    const db = b.tx_date || "";
+    if (da < db) return 1;
+    if (da > db) return -1;
+    return 0;
+  });
 
-  // Deal ID پیشنهادی
-  const customer = document.getElementById("customer").value;
-  const suggested = generateDealId(customer, today, state.rows);
-  document.getElementById("deal_id").value = suggested;
-
-  // اسکرول تا فرم
-  card.scrollIntoView({ behavior: "smooth" });
-}
-
-function hideNewDealForm() {
-  const card = document.getElementById("new-deal-card");
-  if (!card) return;
-  card.classList.add("hidden");
-}
-
-function handleNewDealSubmit(evt) {
-  evt.preventDefault();
-
-  const deal_id = document.getElementById("deal_id").value.trim();
-  const tx_date = document.getElementById("tx_date").value;
-  const customer = document.getElementById("customer").value.trim();
-  const exchanger = document.getElementById("exchanger").value.trim();
-  const account_id = document.getElementById("account_id").value.trim();
-  const tx_type = document.getElementById("tx_type").value;
-  const base_currency = document.getElementById("base_currency").value;
-  const target_currency = document.getElementById("target_currency").value;
-  const amount = toNumber(document.getElementById("amount").value);
-  let payable = toNumber(document.getElementById("payable").value);
-  let trader_rate = toNumber(document.getElementById("trader_rate").value);
-  const exchanger_rate = toNumber(
-    document.getElementById("exchanger_rate").value
-  );
-  const notes = document.getElementById("notes").value.trim();
-
-  if (!tx_date || !customer || !tx_type || !base_currency || amount == null) {
-    alert("Please fill required fields.");
+  if (rows.length === 0) {
+    container.innerHTML = `<p style="opacity:.7;font-size:.85rem;">No deals yet.</p>`;
     return;
   }
 
-  // اگر conversion و payable خالی بود → Auto calc
-  if (tx_type === "conversion".toLowerCase() || tx_type === "conversion") {
-    if (payable == null && trader_rate != null) {
-      payable = autoCalcPayable(
-        base_currency,
-        target_currency,
-        amount,
-        trader_rate
-      );
+  const html = rows
+    .map(r => {
+      const type = (r.tx_type || "").toLowerCase();
+      const customer = r.customer || "";
+      const exchanger = r.exchanger || "";
+      const account = r.account_id || "";
+      const baseCur = r.base_currency || "";
+      const targetCur = r.target_currency || "";
+      const dateLabel = formatDateLabel(r.tx_date);
+      const dealId = r.deal_id || "";
+
+      // Amount display
+      let sign = "";
+      if (type === "inflow") sign = "+";
+      else if (type === "outflow" || type === "conversion") sign = "−";
+
+      let amountValue;
+      if (type === "conversion" && r.payable != null && r.payable !== "") {
+        amountValue = Number(r.payable) || 0;
+      } else {
+        amountValue = Number(r.amount) || 0;
+      }
+
+      const currency = type === "conversion"
+        ? (targetCur || baseCur || "")
+        : (baseCur || targetCur || "");
+
+      const amountClass =
+        type === "inflow" ? "deal-amount positive" : "deal-amount negative";
+
+      const subParts = [];
+      if (dateLabel) subParts.push(dateLabel);
+      if (type) subParts.push(type);
+      if (customer) subParts.push(customer);
+      if (exchanger) subParts.push(exchanger);
+      if (account) subParts.push(account);
+
+      return `
+        <div class="deal-row">
+          <div class="deal-title-line">
+            <div class="deal-id">${dealId}</div>
+            <div class="${amountClass}">
+              ${sign}${formatNumber(amountValue)} ${currency}
+            </div>
+          </div>
+          <div class="deal-sub">${subParts.join(" • ")}</div>
+          <div class="deal-actions">
+            <button class="btn btn-secondary btn-xs" onclick="generateReport('${dealId.replace(/'/g, "\\'")}')">
+              WhatsApp
+            </button>
+            <!-- آماده‌سازی برای آینده:
+            <button class="btn btn-secondary btn-xs" onclick="editDeal('${dealId.replace(/'/g, "\\'")}')">
+              Edit
+            </button>
+            <button class="btn btn-secondary btn-xs" onclick="deleteDeal('${dealId.replace(/'/g, "\\'")}')">
+              Delete
+            </button>
+            -->
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = html;
+}
+
+/* ---------- WhatsApp Report ---------- */
+
+function generateReport(dealId) {
+  const items = state.rows.filter(r => (r.deal_id || "") === dealId);
+  if (!items.length) {
+    alert("No data found for this Deal ID.");
+    return;
+  }
+
+  const inflow = items.filter(i => (i.tx_type || "").toLowerCase() === "inflow");
+  const outflow = items.filter(i => (i.tx_type || "").toLowerCase() === "outflow");
+  const conv = items.filter(i => (i.tx_type || "").toLowerCase() === "conversion");
+
+  let msg = `Deal Report\n🆔 ${dealId}\n━━━━━━━━━━━━━━━\n`;
+
+  if (inflow.length) {
+    msg += "📥 Inflow\n";
+    inflow.forEach(i => {
+      msg += `+ ${formatNumber(i.amount)} ${i.base_currency || ""}\n`;
+    });
+    msg += "\n";
+  }
+
+  if (conv.length) {
+    msg += "♻️ Conversion\n";
+    conv.forEach(c => {
+      const amt = Number(c.amount) || 0;
+      const rate = Number(c.trader_rate) || 0;
+      const pay = Number(c.payable) || 0;
+      msg += `− ${formatNumber(amt)} ${c.base_currency || ""} × ${rate} → ${formatNumber(pay)} ${c.target_currency || ""}\n`;
+    });
+    msg += "\n";
+  }
+
+  if (outflow.length) {
+    msg += "📤 Outflow\n";
+    outflow.forEach(o => {
+      msg += `− ${formatNumber(o.amount)} ${o.base_currency || ""}\n`;
+    });
+    msg += "\n";
+  }
+
+  msg += "━━━━━━━━━━━━━━━\n";
+
+  // تلاش برای Copy to Clipboard
+  if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard
+      .writeText(msg)
+      .then(() => {
+        alert("WhatsApp text copied ✔\nمی‌تونی تو واتساپ Paste کنی.");
+      })
+      .catch(() => {
+        alert(msg);
+      });
+  } else {
+    alert(msg);
+  }
+}
+
+/* ---------- New Deal Form ---------- */
+
+function resetNewDealForm() {
+  const form = document.getElementById("newDealForm");
+  if (!form) return;
+
+  form.reset();
+
+  const today = todayISO();
+  const dateInput = document.getElementById("tx_date");
+  if (dateInput) dateInput.value = today;
+
+  const idInput = document.getElementById("deal_id");
+  if (idInput) idInput.value = generateDealId(today);
+}
+
+function openNewDealForm() {
+  resetNewDealForm();
+  const card = document.getElementById("new-deal-card");
+  card.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function cancelNewDeal() {
+  const card = document.getElementById("new-deal-card");
+  card.classList.add("hidden");
+}
+
+/* ---------- Save Deal ---------- */
+
+function saveDeal(event) {
+  event.preventDefault();
+  const form = document.getElementById("newDealForm");
+  if (!form) return;
+
+  const tx_type = (form.tx_type.value || "").toLowerCase();
+  const base_currency = form.base_currency.value || "";
+  const target_currency = form.target_currency.value || "";
+  const amountStr = form.amount.value.trim();
+  const traderRateStr = form.trader_rate.value.trim();
+  const exchangerRateStr = form.exchanger_rate.value.trim();
+  let payableStr = form.payable.value.trim();
+
+  const amount = amountStr === "" ? null : Number(amountStr);
+  const trader_rate = traderRateStr === "" ? null : Number(traderRateStr);
+  const exchanger_rate =
+    exchangerRateStr === "" ? null : Number(exchangerRateStr);
+
+  // منطق هوشمندتر برای Conversion
+  if (tx_type === "conversion") {
+    if (!base_currency || !target_currency) {
+      alert("برای Conversion، Base Currency و Target Currency الزامی هستند.");
+      return;
+    }
+
+    if (payableStr === "") {
+      // Payable خالی است → باید از Trader Rate + Amount محاسبه شود
+      if (amount == null || trader_rate == null) {
+        alert("برای Conversion بدون Payable، باید Amount و Trader Rate را پر کنی.");
+        return;
+      }
+      const p = calcPayable(base_currency, target_currency, amount, trader_rate);
+      if (p == null) {
+        alert("نمی‌توان Payable را با این ترکیب محاسبه کرد.");
+        return;
+      }
+      payableStr = String(p);
     }
   }
 
-  // اطمینان از اینکه NaN ذخیره نشود
-  if (!Number.isFinite(payable)) payable = null;
-  if (!Number.isFinite(trader_rate)) trader_rate = null;
+  const payable = payableStr === "" ? null : Number(payableStr);
 
-  // اگر Deal ID خالی بود، بساز
-  const finalDealId =
-    deal_id || generateDealId(customer, tx_date, state.rows);
-
-  const newRow = {
-    deal_id: finalDealId,
-    tx_date,
+  const row = {
+    deal_id: form.deal_id.value || generateDealId(form.tx_date.value),
+    tx_date: form.tx_date.value || todayISO(),
     tx_type,
-    customer,
-    exchanger,
-    account_id,
+    customer: form.customer.value || "",
+    exchanger: form.exchanger.value || "",
+    account_id: form.account_id.value || "",
     base_currency,
     target_currency,
     amount,
     payable,
     trader_rate,
     exchanger_rate,
-    trader: "",
-    notes
+    trader: "", // فعلاً خالی
+    notes: form.notes.value || "",
+    source: "local"
   };
 
-  state.localRows.push(newRow);
+  state.localRows.push(row);
   saveLocalRows();
   mergeRows();
   renderDashboard();
   renderDeals();
   renderAlerts();
 
-  hideNewDealForm();
-  alert("New deal saved (local only).");
+  cancelNewDeal();
 }
 
-// ---------- Refresh / Init ----------
+/* ---------- آماده‌سازی Edit/Delete برای آینده ---------- */
 
-async function refreshApp() {
-  const [remote, local] = await Promise.all([
-    loadRemoteRows(),
-    Promise.resolve(loadLocalRows())
-  ]);
+function editDeal(dealId) {
+  // هنوز UI و منطق کامل نشده — در نسخه بعدی
+  console.log("Edit placeholder for:", dealId);
+}
 
-  state.remoteRows = remote;
-  state.localRows = local;
+function deleteDeal(dealId) {
+  // هنوز UI و منطق کامل نشده — در نسخه بعدی
+  console.log("Delete placeholder for:", dealId);
+}
+
+/* ---------- Refresh ---------- */
+
+function refreshApp() {
   mergeRows();
   renderDashboard();
   renderDeals();
   renderAlerts();
 }
 
-function initEventHandlers() {
-  const btnNewDeal = document.getElementById("btn-new-deal");
-  const btnRefresh = document.getElementById("btn-refresh");
-  const btnCancelNew = document.getElementById("btn-cancel-new-deal");
-  const form = document.getElementById("newDealForm");
+/* ---------- Init ---------- */
 
-  if (btnNewDeal) {
-    btnNewDeal.addEventListener("click", showNewDealForm);
-  }
-  if (btnRefresh) {
-    btnRefresh.addEventListener("click", refreshApp);
-  }
-  if (btnCancelNew) {
-    btnCancelNew.addEventListener("click", hideNewDealForm);
-  }
-  if (form) {
-    form.addEventListener("submit", handleNewDealSubmit);
-  }
+async function init() {
+  const lbl = document.getElementById("stat-today-label");
+  if (lbl) lbl.textContent = todayISO();
 
-  // برای سازگاری با نسخه‌های قبلی که onclick داشتند
-  window.openNewDealForm = showNewDealForm;
-  window.refreshApp = refreshApp;
+  const [remote, local] = await Promise.all([
+    loadRemoteData(),
+    loadLocalRows()
+  ]);
+
+  state.remoteRows = remote;
+  state.localRows = local;
+  mergeRows();
+
+  renderDashboard();
+  renderDeals();
+  renderAlerts();
 }
 
-function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("service-worker.js")
-      .catch(err => console.error("SW registration failed", err));
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  initEventHandlers();
-  refreshApp();
-  registerServiceWorker();
-});
+document.addEventListener("DOMContentLoaded", init);
