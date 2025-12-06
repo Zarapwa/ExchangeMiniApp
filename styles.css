@@ -59,4 +59,15 @@ input, select {
     padding: 8px;
     border-radius: 8px;
     border: none;
+}/* --- V102 extras --- */
+
+.deal-actions {
+  margin-top: 0.3rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-xs {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
 }
