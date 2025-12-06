@@ -1,26 +1,6 @@
-const CACHE_NAME = "exchange-v104";
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        "./",
-        "./index.html",
-        "./styles.css",
-        "./app.js",
-        "./data.json",
-        "./manifest.json",
-      ]);
-    })
-  );
-});
-
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", () => self.clients.claim());
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((resp) => {
-      return resp || fetch(event.request);
-    })
-  );
+  // همیشه از شبکه بخوان، هیچ‌وقت از cache نده
+  event.respondWith(fetch(event.request));
 });
-
-
