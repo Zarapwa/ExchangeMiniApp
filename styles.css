@@ -46,3 +46,6 @@ body {
 .hidden {
   display: none !important;
 }
+section.view.hidden {
+  display: none !important;
+}
