@@ -1,55 +1,164 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exchange Mini</title>
-  <link rel="stylesheet" href="styles.css?v=final">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ExchangeMini</title>
+
+  <link rel="stylesheet" href="./styles.css?v=1.0.4" />
+  <script defer src="./app.js?v=1.0.4"></script>
 </head>
 
 <body>
-  <div class="app">
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-title">EXCHANGEMINI</div>
+      <div class="brand-sub">Deal &amp; Cash Flow Console</div>
+    </div>
 
-    <!-- NAV -->
-    <nav class="app-nav">
-      <button class="nav-link active" data-view="dashboard">Dashboard</button>
-      <button class="nav-link" data-view="deals">Deals</button>
-      <button class="nav-link" data-view="transactions">Transactions</button>
-      <button class="nav-link" data-view="reports">Reports</button>
-      <button class="nav-link" data-view="new-deal">New Deal</button>
-    </nav>
+    <div class="header-right">
+      <button id="debugBtn" class="pill pill-outline" type="button">Debug</button>
+      <span class="version-pill" id="appVersion">vmini</span>
+    </div>
+  </header>
 
-    <!-- MAIN -->
+  <div class="app-shell">
+    <aside class="app-nav" aria-label="Navigation">
+      <button class="pill nav-link is-active" type="button" data-view="dashboard">Dashboard</button>
+      <button class="pill nav-link" type="button" data-view="deals">Deals</button>
+      <button class="pill nav-link" type="button" data-view="transactions">Transactions</button>
+      <button class="pill nav-link" type="button" data-view="reports">Reports</button>
+      <button class="pill nav-link" type="button" data-view="new-deal">New Deal</button>
+    </aside>
+
     <main class="app-main">
+      <!-- DASHBOARD -->
+      <section class="view is-active" data-view="dashboard">
+        <h2 class="h2">Dashboard</h2>
 
-      <section class="view" data-view="dashboard">
-        <h1>Dashboard</h1>
-        <p>Dashboard content goes here.</p>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-label">Total Deals</div>
+            <div class="card-value" id="dashTotalDeals">0</div>
+            <div class="card-caption">Unique Deal IDs</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Today’s Deals</div>
+            <div class="card-value" id="dashTodayDeals">0</div>
+            <div class="card-caption" id="dashTodayLabel">—</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Total Transactions</div>
+            <div class="card-value" id="dashTotalTx">0</div>
+            <div class="card-caption">All records from data.json</div>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <div class="card-label">Deals by Currency (Base)</div>
+          <div id="dashCurrencySummary" class="mini-table"></div>
+        </div>
+
+        <div class="card mt">
+          <div class="card-label">Latest Activity</div>
+          <div id="dashLatest" class="mini-table"></div>
+        </div>
       </section>
 
-      <section class="view hidden" data-view="deals">
-        <h1>Deals</h1>
-        <p>Deals view</p>
+      <!-- DEALS -->
+      <section class="view" data-view="deals">
+        <div class="row-between">
+          <h2 class="h2">Deals</h2>
+          <div class="muted" id="dealsCountLabel"></div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table" id="dealsTable">
+              <thead>
+                <tr>
+                  <th>Deal ID</th>
+                  <th>Customer</th>
+                  <th>Base</th>
+                  <th>Total Amount</th>
+                  <th>Tx Count</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="hint">Tap a deal row to open its transactions.</div>
+        </div>
       </section>
 
-      <section class="view hidden" data-view="transactions">
-        <h1>Transactions</h1>
-        <p>Transactions view</p>
+      <!-- TRANSACTIONS -->
+      <section class="view" data-view="transactions">
+        <div class="row-between">
+          <h2 class="h2">Transactions</h2>
+          <div class="muted" id="txContextLabel"></div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <input id="txSearch" class="input" type="search" placeholder="Search (deal, customer, currency, notes)..." />
+            <button id="txClearFilter" class="pill pill-outline" type="button">Clear</button>
+          </div>
+
+          <div class="table-wrap mt">
+            <table class="table" id="txTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Deal</th>
+                  <th>Type</th>
+                  <th>Base</th>
+                  <th>Amount</th>
+                  <th>Target</th>
+                  <th>Payable</th>
+                  <th>Customer</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hint">Tip: Tap a deal in Deals view to filter here automatically.</div>
+        </div>
       </section>
 
-      <section class="view hidden" data-view="reports">
-        <h1>Reports</h1>
-        <p>Reports view</p>
+      <!-- REPORTS -->
+      <section class="view" data-view="reports">
+        <h2 class="h2">Reports</h2>
+        <div class="card">
+          <div class="card-label">Report Generator</div>
+          <div class="muted">Placeholder (will be wired after navigation + data are stable).</div>
+        </div>
       </section>
 
-      <section class="view hidden" data-view="new-deal">
-        <h1>New Deal</h1>
-        <p>New deal form here</p>
+      <!-- NEW DEAL -->
+      <section class="view" data-view="new-deal">
+        <h2 class="h2">New Deal</h2>
+        <div class="card">
+          <div class="card-label">New deal form</div>
+          <div class="muted">Placeholder (will be wired after navigation + data are stable).</div>
+        </div>
       </section>
 
+      <!-- DEBUG PANEL -->
+      <section class="view" data-view="debug">
+        <h2 class="h2">Debug</h2>
+        <div class="card">
+          <div class="card-label">Logs</div>
+          <pre id="debugLog" class="debug"></pre>
+          <div class="row mt">
+            <button id="reloadData" class="pill" type="button">Reload data.json</button>
+            <button id="clearLocal" class="pill pill-outline" type="button">Clear Local Cache</button>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
-
-  <script src="app.js?v=final"></script>
 </body>
 </html>
