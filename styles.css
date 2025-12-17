@@ -78,3 +78,11 @@ body {
   padding: 16px;
   border-radius: 16px;
 }
+/* make taps always reach buttons */
+.app-nav, .app-nav * { pointer-events: auto; }
+.app-nav { position: relative; z-index: 50; }
+.app-header { position: relative; z-index: 60; }
+.app-main { position: relative; z-index: 10; }
+
+/* IMPORTANT: if you use any background overlay, it must not capture taps */
+body::before, body::after { pointer-events: none; }
