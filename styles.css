@@ -1,88 +1,36 @@
-/* RESET */
-* {
-  box-sizing: border-box;
-}
-
-/* LAYOUT */
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background: radial-gradient(circle at top, #1b2230, #0c0f16);
-  color: #fff;
-}
-
-.app-shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* HEADER */
-.app-header {
-  padding: 16px;
-}
-
-.app-title {
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.app-subtitle {
-  opacity: 0.7;
-}
-
-/* NAV */
-.app-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-}
-
-/* BUTTONS */
-.pill {
-  padding: 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  border: none;
-  font-size: 16px;
-}
-
-.pill-primary {
-  background: #f4c76b;
-  color: #000;
-}
-
-/* MAIN */
-.app-main {
-  padding: 16px;
-}
-
-/* 🔴 مهم‌ترین بخش */
+/* سبک‌دهی کلی برای بخش‌های نمایش */
 .view {
-  display: none;
+  padding: 1em;
+  /* سایر استایل‌های دلخواه برای بخش‌ها */
 }
 
-.view:not(.hidden) {
-  display: block;
-}
-
-.hidden {
+/* مخفی کردن بخش‌هایی که غیر فعال هستند */
+.hidden, 
+.view-hidden {
   display: none !important;
 }
 
-/* CARD */
-.card {
-  background: rgba(255,255,255,0.08);
-  padding: 16px;
-  border-radius: 16px;
+/* استایل برای لینک فعال در ناوبری */
+nav a.active {
+  font-weight: bold;
+  color: #007BFF;  /* به عنوان نمونه، رنگ متن آبی برای لینک فعال */
 }
-/* make taps always reach buttons */
-.app-nav, .app-nav * { pointer-events: auto; }
-.app-nav { position: relative; z-index: 50; }
-.app-header { position: relative; z-index: 60; }
-.app-main { position: relative; z-index: 10; }
 
-/* IMPORTANT: if you use any background overlay, it must not capture taps */
-body::before, body::after { pointer-events: none; }
+/* استایل‌های دلخواه برای نوار ناوبری */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+nav li {
+  margin-right: 1em;
+}
+nav a {
+  text-decoration: none;
+  color: black;
+  /* سایر استایل‌های لینک‌های ناوبری */
+}
+nav a:hover {
+  text-decoration: underline;
+}
