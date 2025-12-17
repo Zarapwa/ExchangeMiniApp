@@ -108,4 +108,11 @@ html, body {
 
 .view:not(.hidden) {
   display: block;
+}.view {
+  display: block;
 }
+
+.hidden {
+  display: none !important;
+}
+
