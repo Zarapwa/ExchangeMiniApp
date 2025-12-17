@@ -1,1 +1,105 @@
+:root {
+  --bg: #0b0f16;
+  --bg-soft: #111827;
+  --accent: #f4c35a;
+  --text: #f5f7fa;
+  --text-soft: #9ca3af;
+  --border: rgba(255,255,255,.08);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 20px 40px rgba(0,0,0,.55);
+  --font: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top left,#161925 0%,#050608 55%,#020204 100%);
+  color: var(--text);
+  font-family: var(--font);
+}
+
+/* APP SHELL */
+.app-shell {
+  min-height: 100vh;
+  padding: 16px 16px 80px;
+}
+
+/* HEADER */
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.app-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.app-subtitle {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+/* PILLS / BUTTONS */
+.pill {
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.pill-primary {
+  background: linear-gradient(135deg,#f4c35a,#ffdd88);
+  color: #000;
+  border: none;
+}
+
+/* NAV */
+.app-nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+/* MAIN */
+.app-main {
+  display: block;
+}
+
+/* DASHBOARD CARDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap: 12px;
+}
+
+.card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.card-label {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.card-value {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 4px;
+}
 
