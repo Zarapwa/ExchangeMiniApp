@@ -5,145 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EXCHANGEMINI</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="styles.css?v=1" />
-
-  <!-- APP -->
   <script defer src="app.js?v=mini-1.0.3"></script>
 </head>
 
 <body class="app-shell">
 
-  <!-- HEADER -->
-  <header class="app-header">
-    <div class="app-title-block">
-      <div class="app-title">EXCHANGEMINI</div>
-      <div class="app-subtitle">Deal & Cash Flow Console</div>
+<header class="app-header">
+  <div class="app-title-block">
+    <div class="app-title">EXCHANGEMINI</div>
+    <div class="app-subtitle">Deal & Cash Flow Console</div>
+  </div>
+
+  <div class="app-header-right">
+    <button id="debug-button" class="pill pill-outline">Debug</button>
+    <span class="version-pill">v<span id="app-version"></span></span>
+  </div>
+</header>
+
+<nav class="app-nav">
+  <button class="pill pill-primary nav-link" data-view="dashboard">Dashboard</button>
+  <button class="pill nav-link" data-view="deals">Deals</button>
+  <button class="pill nav-link" data-view="transactions">Transactions</button>
+  <button class="pill nav-link" data-view="reports">Reports</button>
+  <button class="pill nav-link" data-view="new-deal">New Deal</button>
+</nav>
+
+<main class="app-main">
+
+  <!-- DASHBOARD -->
+  <section class="view" data-view="dashboard">
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">Total Deals</div>
+        <div class="card-value" id="total-deals">0</div>
+        <div class="card-caption">Unique Deal IDs</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Today's Deals</div>
+        <div class="card-value" id="todays-deals">0</div>
+        <div class="card-caption" id="today-label"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Total Transactions</div>
+        <div class="card-value" id="total-transactions">0</div>
+        <div class="card-caption">All records from data.json</div>
+      </div>
     </div>
 
-    <div class="app-header-right">
-      <button id="debug-button" class="pill pill-outline">Debug</button>
-      <span class="version-pill">
-        v<span id="app-version"></span>
-      </span>
+    <div class="card">
+      <div class="card-label">Deals by Currency</div>
+      <div id="currency-summary" class="mini-table"></div>
     </div>
-  </header>
+  </section>
 
-  <!-- NAV -->
-  <nav class="app-nav">
-    <button class="pill pill-primary nav-link active" data-view="dashboard">Dashboard</button>
-    <button class="pill nav-link" data-view="deals">Deals</button>
-    <button class="pill nav-link" data-view="transactions">Transactions</button>
-    <button class="pill nav-link" data-view="reports">Reports</button>
-    <button class="pill nav-link" data-view="new-deal">New Deal</button>
-  </nav>
+  <!-- DEALS -->
+  <section class="view hidden" data-view="deals">
+    <div class="card">
+      <h2>Deals</h2>
+      <div id="deals-table"></div>
+    </div>
+  </section>
 
-  <!-- MAIN -->
-  <main class="app-main">
+  <!-- TRANSACTIONS -->
+  <section class="view hidden" data-view="transactions">
+    <div class="card">
+      <h2>Transactions</h2>
+      <div id="transactions-table"></div>
+    </div>
+  </section>
 
-    <!-- DASHBOARD -->
-    <section class="view" data-view="dashboard">
-      <div class="card-grid">
+  <!-- REPORTS -->
+  <section class="view hidden" data-view="reports">
+    <div class="card">
+      <h2>Reports</h2>
+      <div id="reports-content"></div>
+    </div>
+  </section>
 
-        <div class="card">
-          <div class="card-label">Total Deals</div>
-          <div class="card-value" id="total-deals">0</div>
-          <div class="card-caption">Unique Deal IDs</div>
-        </div>
+  <!-- NEW DEAL -->
+  <section class="view hidden" data-view="new-deal">
+    <div class="card">
+      <h2>New Deal</h2>
+      <form id="new-deal-form"></form>
+    </div>
+  </section>
 
-        <div class="card">
-          <div class="card-label">Today's Deals</div>
-          <div class="card-value" id="todays-deals">0</div>
-          <div class="card-caption" id="today-label"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">Total Transactions</div>
-          <div class="card-value" id="total-transactions">0</div>
-          <div class="card-caption">All records from data.json</div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">Deals by Currency</div>
-          <div id="currency-summary" class="mini-table"></div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- DEALS -->
-    <section class="view hidden" data-view="deals">
-      <div class="card">
-        <div class="card-label">Deals</div>
-        <small id="deals-count-label" class="muted"></small>
-      </div>
-
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Deal ID</th>
-              <th>Customer</th>
-              <th>Base</th>
-              <th>Total Amount</th>
-              <th>Tx Count</th>
-            </tr>
-          </thead>
-          <tbody id="deals-table-body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TRANSACTIONS -->
-    <section class="view hidden" data-view="transactions">
-      <div class="card">
-        <div class="card-label">Transactions</div>
-      </div>
-
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Deal</th>
-              <th>Type</th>
-              <th>Currency</th>
-              <th>Amount</th>
-              <th>Note</th>
-            </tr>
-          </thead>
-          <tbody id="transactions-table-body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- REPORTS -->
-    <section class="view hidden" data-view="reports">
-      <div class="card">
-        <div class="card-label">Reports</div>
-        <p class="muted">Summary & pivot reports will appear here.</p>
-      </div>
-    </section>
-
-    <!-- NEW DEAL -->
-    <section class="view hidden" data-view="new-deal">
-      <div class="card">
-        <div class="card-label">New Deal</div>
-
-        <form id="new-deal-form" class="form-grid">
-          <input name="deal_id" placeholder="Deal ID" required />
-          <input name="customer" placeholder="Customer" required />
-          <input name="base_currency" placeholder="Base Currency" required />
-          <input name="amount" type="number" placeholder="Amount" required />
-          <button class="pill pill-primary" type="submit">Save Deal</button>
-        </form>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- DEBUG PANEL -->
-  <div id="debug-panel" class="debug-panel hidden"></div>
+</main>
 
 </body>
 </html>
