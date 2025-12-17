@@ -1,94 +1,79 @@
 :root {
-  --bg: #0b0f16;
-  --bg-soft: #111827;
-  --accent: #f4c35a;
-  --text: #f5f7fa;
-  --text-soft: #9ca3af;
-  --border: rgba(255,255,255,.08);
-  --radius: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 20px 40px rgba(0,0,0,.55);
-  --font: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  --bg: #0b0f1a;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.08);
+  --text: #f5f6fa;
+  --text-soft: #aeb3c2;
+  --accent: #f6d36b;
+  --radius: 18px;
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top left,#161925 0%,#050608 55%,#020204 100%);
+  background: radial-gradient(circle at top, #141a2e, var(--bg));
   color: var(--text);
-  font-family: var(--font);
 }
 
-/* APP SHELL */
-.app-shell {
-  min-height: 100vh;
-  padding: 16px 16px 80px;
-}
-
-/* HEADER */
 .app-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  padding: 24px;
 }
 
 .app-title {
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: .08em;
+  font-size: 32px;
+  font-weight: 800;
 }
 
 .app-subtitle {
-  font-size: 14px;
   color: var(--text-soft);
 }
 
-/* PILLS / BUTTONS */
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 24px;
+}
+
 .pill {
-  border: 1px solid var(--border);
-  background: var(--bg-soft);
-  color: var(--text);
-  padding: 10px 16px;
+  padding: 14px 20px;
   border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
   cursor: pointer;
 }
 
 .pill-primary {
-  background: linear-gradient(135deg,#f4c35a,#ffdd88);
+  background: var(--accent);
   color: #000;
-  border: none;
+  font-weight: 700;
 }
 
-/* NAV */
-.app-nav {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+.pill-outline {
+  background: transparent;
 }
 
-/* MAIN */
 .app-main {
-  display: block;
+  padding: 24px;
 }
 
-/* DASHBOARD CARDS */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
 }
 
 .card {
-  background: rgba(255,255,255,.04);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 16px;
   box-shadow: var(--shadow);
 }
 
@@ -98,21 +83,19 @@ html, body {
 }
 
 .card-value {
-  font-size: 26px;
-  font-weight: 700;
-  margin-top: 4px;
-}
-.view {
-  display: none;
+  font-size: 28px;
+  font-weight: 800;
 }
 
-.view:not(.hidden) {
-  display: block;
-}.view {
+.card-caption {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.view {
   display: block;
 }
 
 .hidden {
   display: none !important;
 }
-
