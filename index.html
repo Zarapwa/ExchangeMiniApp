@@ -2,57 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ExchangeMini</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=final1">
 </head>
+
 <body>
+  <div class="app">
 
-<header class="app-header">
-  <h1>EXCHANGEMINI</h1>
-  <div class="version">vmini-1.0.3</div>
-</header>
+    <!-- NAV -->
+    <nav class="app-nav">
+      <button class="nav-link active" data-view="dashboard">Dashboard</button>
+      <button class="nav-link" data-view="deals">Deals</button>
+      <button class="nav-link" data-view="transactions">Transactions</button>
+      <button class="nav-link" data-view="reports">Reports</button>
+      <button class="nav-link" data-view="new-deal">New Deal</button>
+    </nav>
 
-<nav class="app-nav">
-  <button class="pill nav-link active" data-view="dashboard">Dashboard</button>
-  <button class="pill nav-link" data-view="deals">Deals</button>
-  <button class="pill nav-link" data-view="transactions">Transactions</button>
-  <button class="pill nav-link" data-view="reports">Reports</button>
-  <button class="pill nav-link" data-view="new-deal">New Deal</button>
-</nav>
+    <!-- CONTENT -->
+    <main class="app-main">
 
-<main class="app-main">
+      <section class="view" data-view="dashboard">
+        <h1>Dashboard</h1>
+        <p>Dashboard content goes here.</p>
+      </section>
 
-  <section class="view" data-view="dashboard">
-    <h2>Dashboard</h2>
-    <div class="cards">
-      <div class="card">Total Deals: <span id="total-deals">0</span></div>
-      <div class="card">Total Transactions: <span id="total-transactions">0</span></div>
-    </div>
-  </section>
+      <section class="view hidden" data-view="deals">
+        <h1>Deals</h1>
+        <p>Deals view</p>
+      </section>
 
-  <section class="view hidden" data-view="deals">
-    <h2>Deals</h2>
-    <ul id="deals-list"></ul>
-  </section>
+      <section class="view hidden" data-view="transactions">
+        <h1>Transactions</h1>
+        <p>Transactions view</p>
+      </section>
 
-  <section class="view hidden" data-view="transactions">
-    <h2>Transactions</h2>
-    <ul id="transactions-list"></ul>
-  </section>
+      <section class="view hidden" data-view="reports">
+        <h1>Reports</h1>
+        <p>Reports view</p>
+      </section>
 
-  <section class="view hidden" data-view="reports">
-    <h2>Reports</h2>
-    <p>Reports view</p>
-  </section>
+      <section class="view hidden" data-view="new-deal">
+        <h1>New Deal</h1>
+        <p>New deal form here</p>
+      </section>
 
-  <section class="view hidden" data-view="new-deal">
-    <h2>New Deal</h2>
-    <p>New deal form goes here</p>
-  </section>
+    </main>
+  </div>
 
-</main>
-
-<script src="app.js?v=3"></script>
+  <script src="app.js?v=final1"></script>
 </body>
 </html>
