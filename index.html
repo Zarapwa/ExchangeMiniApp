@@ -2,16 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ExchangeMini</title>
-
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
 
 <header class="app-header">
   <h1>EXCHANGEMINI</h1>
-  <p>Deal & Cash Flow Console</p>
   <div class="version">vmini-1.0.3</div>
 </header>
 
@@ -25,33 +23,36 @@
 
 <main class="app-main">
 
-  <section class="view active" data-view="dashboard">
+  <section class="view" data-view="dashboard">
     <h2>Dashboard</h2>
-    <p>Dashboard content goes here.</p>
+    <div class="cards">
+      <div class="card">Total Deals: <span id="total-deals">0</span></div>
+      <div class="card">Total Transactions: <span id="total-transactions">0</span></div>
+    </div>
   </section>
 
-  <section class="view" data-view="deals">
+  <section class="view hidden" data-view="deals">
     <h2>Deals</h2>
-    <p>Deals list goes here.</p>
+    <ul id="deals-list"></ul>
   </section>
 
-  <section class="view" data-view="transactions">
+  <section class="view hidden" data-view="transactions">
     <h2>Transactions</h2>
-    <p>Transactions list goes here.</p>
+    <ul id="transactions-list"></ul>
   </section>
 
-  <section class="view" data-view="reports">
+  <section class="view hidden" data-view="reports">
     <h2>Reports</h2>
-    <p>Reports content goes here.</p>
+    <p>Reports view</p>
   </section>
 
-  <section class="view" data-view="new-deal">
+  <section class="view hidden" data-view="new-deal">
     <h2>New Deal</h2>
-    <p>New deal form goes here.</p>
+    <p>New deal form goes here</p>
   </section>
 
 </main>
 
-<script src="app.js"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
